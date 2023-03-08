@@ -3,7 +3,7 @@ WORKDIR /application
 COPY go.mod .
 RUN go mod download
 COPY . .
-RUN go build -ldflags "-s -w" -o app
+RUN go build -o app -ldflags "-s -w"
 
 FROM scratch
 WORKDIR /application
