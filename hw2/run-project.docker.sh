@@ -7,7 +7,7 @@ docker build -t mahmoudreza/cloud-hw2-server ./server
 # push images to docker hub
 echo psuh images to docker hub
 docker push mahmoudreza/cloud-hw2-client 
-docker push mahmoudreza/cloud-hw2-client
+docker push mahmoudreza/cloud-hw2-server
 
 # create volumes 
 echo create volumes 
