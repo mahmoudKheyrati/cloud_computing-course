@@ -29,23 +29,24 @@ type Person struct {
 func main() {
 	mongoUsername, ok := os.LookupEnv("MONGO_USERNAME")
 	if !ok {
-		panic("set MONGO_USERNAME ")
+		mongoUsername = "user"
 	}
 	mongoPassword, ok := os.LookupEnv("MONGO_PASSWORD")
 	if !ok {
-		panic("set MONGO_PASSWORD ")
+		mongoPassword = "pass"
 	}
 	mongoHost, ok := os.LookupEnv("MONGO_HOST")
 	if !ok {
-		panic("set MONGO_HOST ")
+		mongoHost = "localhost"
 	}
 	mongoPort, ok := os.LookupEnv("MONGO_PORT")
 	if !ok {
-		panic("set MONGO_PORT ")
+		mongoPort = "27017"
 	}
 
 	ctx := context.Background()
 	url := fmt.Sprintf("mongodb://%s:%s@%s:%s", mongoUsername, mongoPassword, mongoHost, mongoPort)
+	fmt.Println("mongoUrl: ", url)
 	mongoClient, err := createMongodbConnection(ctx, url)
 	defer func() {
 		if err = mongoClient.Disconnect(ctx); err != nil {
@@ -133,7 +134,7 @@ func main() {
 
 	app.Get("/randomFile", func(ctx *fiber.Ctx) error {
 		fileName := fmt.Sprintf("%s.txt", string(generateRandomString(10)))
-		path := fmt.Sprintf("/serverdata/%s.txt", fileName)
+		path := fmt.Sprintf("./%s.txt", fileName)
 		content := generateRandomString(1024)
 		err = ioutil.WriteFile(path, content, 0644)
 		if err != nil {
