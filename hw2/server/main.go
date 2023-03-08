@@ -41,7 +41,7 @@ func main() {
 	}
 	mongoPort, ok := os.LookupEnv("MONGO_PORT")
 	if !ok {
-		panic("set MONGO_HOST ")
+		panic("set MONG_PORT ")
 	}
 
 	ctx := context.Background()
