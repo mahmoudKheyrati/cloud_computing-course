@@ -1,8 +1,8 @@
 #! /bin/bash
 # build projects
 echo build projects ... 
-# docker build -t mahmoudreza/cloud-hw2-client ./client
-# docker build -t mahmoudreza/cloud-hw2-server ./server
+docker build -t mahmoudreza/cloud-hw2-client ./client
+docker build -t mahmoudreza/cloud-hw2-server ./server
 
 # push images to docker hub
 echo psuh images to docker hub
