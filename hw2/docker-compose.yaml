@@ -1,0 +1,52 @@
+version: "3.8"
+services:
+  mongo:
+    image: mongo:latest
+    environment:
+      - "MONGO_INITDB_ROOT_USERNAME=user"
+      - "MONGO_INITDB_ROOT_PASSWORD=pass"
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_vol:/data/db
+    networks:
+      - docker-cloud-h2-network
+  server:
+    image: mahmoudreza/cloud-hw2-server
+    environment:
+      - "MONGO_USERNAME=user"
+      - "MONGO_PASSWORD=pass"
+      - "MONGO_HOST=mongo"
+      - "MONGO_PORT=27017"
+      - "RANDOM_FILES_PATH=/serverdata"
+    ports:
+      - "3000:3000"
+    volumes:
+      - server_vol:/serverdata
+    networks:
+      - docker-cloud-h2-network
+    depends_on:
+      - mongo
+
+  client:
+    image: mahmoudreza/cloud-hw2-client
+    environment:
+      - "SERVER_HOST=server"
+      - "SERVER_PORT=3000"
+      - "SAVE_FILE_PATH=/clientdata"
+    volumes:
+      - client_vol:/clientdata
+    networks:
+      - docker-cloud-h2-network
+    depends_on:
+      - mongo
+      - server
+
+volumes:
+  mongodb_vol:
+  server_vol:
+  client_vol:
+
+networks:
+  docker-cloud-h2-network:
+    
