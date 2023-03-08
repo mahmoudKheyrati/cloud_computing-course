@@ -3,7 +3,7 @@ WORKDIR /application
 COPY go.mod .
 RUN go mod download
 COPY . .
-RUN go build -o app -ldflags "-s -w"
+RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o app .
 
 FROM scratch
 WORKDIR /application

@@ -4,11 +4,11 @@ COPY go.mod .
 COPY go.sum .
 RUN go mod download
 COPY . .
-RUN go build -o app -ldflags "-s -w"
+RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o app .
 
 FROM scratch
-WORKDIR /application
 LABEL "applicationName"="server"
+WORKDIR /application
 COPY --from=build /application/app .
 EXPOSE 3000
 CMD ["./app"]
