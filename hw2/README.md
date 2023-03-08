@@ -1,4 +1,7 @@
 # cloud hw2 (client and server with mongodb)
+## reduce size of the images 
+I use multi-stage build and scatch base image to delete unnecessary dependencies. 
+
 ## volumes 
 there are two types of volumes: Named Volumes (docker managed) and Bind Mounts (bind directory you decide and bind it to the container)
 create Named Volumes with `docker volume create <VOLUME_NAME>`. 
