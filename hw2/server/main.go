@@ -22,8 +22,8 @@ const USER_DATABASE = "user"
 const PERSON_COLLECTION = "person"
 
 type Person struct {
-	Name    string `json:"name"`
-	Address string `json:"address"`
+	Name   string `json:"name"`
+	Family string `json:"family"`
 }
 
 func main() {
