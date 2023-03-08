@@ -12,6 +12,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+	"os"
 
 	"io/ioutil"
 	"math/rand"
@@ -26,8 +27,26 @@ type Person struct {
 }
 
 func main() {
+	mongoUsername, ok := os.LookupEnv("MONGO_USERNAME")
+	if !ok {
+		panic("set MONGO_USERNAME ")
+	}
+	mongoPassword, ok := os.LookupEnv("MONGO_PASSWORD")
+	if !ok {
+		panic("set MONGO_PASSWORD ")
+	}
+	mongoHost, ok := os.LookupEnv("MONGO_HOST")
+	if !ok {
+		panic("set MONGO_HOST ")
+	}
+	mongoPort, ok := os.LookupEnv("MONGO_PORT")
+	if !ok {
+		panic("set MONGO_HOST ")
+	}
+
 	ctx := context.Background()
-	mongoClient, err := createMongodbConnection(ctx, "mongodb://user:pass@localhost:27017")
+	url := fmt.Sprintf("mongodb://%s:%s@%s:%s", mongoUsername, mongoPassword, mongoHost, mongoPort)
+	mongoClient, err := createMongodbConnection(ctx, url)
 	defer func() {
 		if err = mongoClient.Disconnect(ctx); err != nil {
 			panic(err)
