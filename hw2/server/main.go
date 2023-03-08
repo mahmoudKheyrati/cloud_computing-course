@@ -5,9 +5,12 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	_ "github.com/gofiber/fiber/v2/middleware/logger"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
 	"io/ioutil"
 	"math/rand"
 )
@@ -22,6 +25,7 @@ func main() {
 	}()
 
 	app := fiber.New()
+	app.Use(logger.New())
 
 	// create new person
 	app.Put("/person", func(ctx *fiber.Ctx) error {
@@ -41,15 +45,29 @@ func main() {
 	})
 
 	app.Get("/randomFile", func(ctx *fiber.Ctx) error {
-		// first generate random string as file name
-		// then create 1kb random file
-		// get sha256 checksum of the file and sends it to client
-
-		//err := ioutil.WriteFile("", nil, 0644)
-		//if err != nil {
-		//	return
-		//}
-		//getChecksumOfFile(path)
+		fileName := fmt.Sprintf("%s.txt", string(generateRandomString(10)))
+		path := fmt.Sprintf("/serverdata/%s.txt", fileName)
+		content := generateRandomString(1024)
+		err = ioutil.WriteFile(path, content, 0644)
+		if err != nil {
+			ctx.Status(fiber.StatusInternalServerError)
+			err = ctx.JSON(fiber.Map{"error": "can not serve file"})
+			return err
+		}
+		file, err := getChecksumOfFile(path)
+		if err != nil {
+			ctx.Status(fiber.StatusInternalServerError)
+			ctx.JSON(fiber.Map{"error": "can not serve file"})
+			return err
+		}
+		ctx.Set("checksum", file)
+		ctx.Set(fiber.HeaderContentDisposition, fmt.Sprintf("attachment; filename=\"%s\"", fileName))
+		err = ctx.SendFile(path)
+		if err != nil {
+			ctx.Status(fiber.StatusInternalServerError)
+			ctx.JSON(fiber.Map{"error": "can not serve file"})
+			return err
+		}
 		return nil
 	})
 
@@ -58,24 +76,24 @@ func main() {
 		fmt.Printf("%s\n", err.Error())
 	}
 }
-func getChecksumOfFile(path string) ([]byte, error) {
+func getChecksumOfFile(path string) (string, error) {
 	content, err := ioutil.ReadFile(path)
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 	h := sha256.New()
 	h.Write(content)
 	sum := h.Sum(nil)
-	return sum, nil
+	return fmt.Sprintf("%x", sum), nil
 }
 
-func generateRandomString(n int) string {
+func generateRandomString(n int) []byte {
 	letterBytes := "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
 	b := make([]byte, n)
 	for i := range b {
 		b[i] = letterBytes[rand.Intn(len(letterBytes))]
 	}
-	return string(b)
+	return b
 }
 
 func createMongodbConnection(ctx context.Context, uri string) (*mongo.Client, error) {
