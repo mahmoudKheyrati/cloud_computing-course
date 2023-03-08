@@ -43,6 +43,11 @@ func main() {
 	if !ok {
 		mongoPort = "27017"
 	}
+	randomFilePath, ok := os.LookupEnv("RANDOM_FILES_PATH")
+	if !ok {
+		randomFilePath = "."
+	}
+	fmt.Println("randomFilePath: ", randomFilePath)
 
 	ctx := context.Background()
 	url := fmt.Sprintf("mongodb://%s:%s@%s:%s", mongoUsername, mongoPassword, mongoHost, mongoPort)
@@ -134,7 +139,7 @@ func main() {
 
 	app.Get("/randomFile", func(ctx *fiber.Ctx) error {
 		fileName := fmt.Sprintf("%s.txt", string(generateRandomString(10)))
-		path := fmt.Sprintf("./%s.txt", fileName)
+		path := fmt.Sprintf("%s/%s.txt", randomFilePath, fileName)
 		content := generateRandomString(1024)
 		err = ioutil.WriteFile(path, content, 0644)
 		if err != nil {
