@@ -16,16 +16,14 @@ func main() {
 		fmt.Printf("Failed to create producer: %s\n", err)
 		os.Exit(1)
 	}
-	produceMessage(p, 1)
-
 	// produce 10000 messages concurrently
 	var wg sync.WaitGroup
 	for i := 0; i < 10_000; i++ {
 		wg.Add(1)
-		go func() {
+		go func(i int) {
 			defer wg.Done()
 			produceMessage(p, i)
-		}()
+		}(i)
 	}
 	wg.Wait()
 	fmt.Println("all messages published to kafka")
@@ -47,5 +45,6 @@ func produceMessage(p *kafka.Producer, i int) {
 		fmt.Println("produce message error: ", err)
 	}
 	<-deliveryChannel
+	p.Close()
 	//fmt.Println("message published to kafka")
 }
