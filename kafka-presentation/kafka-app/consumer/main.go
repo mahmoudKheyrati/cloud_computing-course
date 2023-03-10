@@ -24,7 +24,8 @@ func main() {
 	}
 
 	//justRead(consumer)
-	syncCommit(consumer, 1000)
+	//syncCommit(consumer, 1000)
+	AsyncCommit(consumer, 10)
 
 }
 
@@ -64,6 +65,34 @@ func syncCommit(consumer *kafka.Consumer, commitBatchSize int) {
 			}
 			fmt.Println("committed topic_partitions: ", commitMessage)
 			count = 0
+		}
+
+	}
+}
+
+func AsyncCommit(consumer *kafka.Consumer, commitBatchSize int) {
+	var count = 0
+	for {
+		message, err := consumer.ReadMessage(-1)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+
+		//// actual process on data
+		//fmt.Println("consumer message content: ", string(message.Value))
+
+		count++
+		if count == commitBatchSize {
+			go func() {
+				commitMessage, err := consumer.CommitMessage(message)
+				if err != nil {
+					fmt.Println(err)
+
+				}
+				fmt.Println("committed topic_partitions: ", commitMessage)
+				count = 0
+			}()
 		}
 
 	}
