@@ -5,6 +5,7 @@ import (
 	"github.com/confluentinc/confluent-kafka-go/kafka"
 	"os"
 	"sync"
+	"time"
 )
 
 func main() {
@@ -16,9 +17,10 @@ func main() {
 		fmt.Printf("Failed to create producer: %s\n", err)
 		os.Exit(1)
 	}
-	// produce 10000 messages concurrently
+	// produce 30000 messages concurrently
 	var wg sync.WaitGroup
-	for i := 0; i < 10_000; i++ {
+	start := time.Now()
+	for i := 0; i < 50_000; i++ {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
@@ -26,7 +28,7 @@ func main() {
 		}(i)
 	}
 	wg.Wait()
-	fmt.Println("all messages published to kafka")
+	fmt.Println("all messages published to kafka in ", time.Since(start))
 
 }
 
