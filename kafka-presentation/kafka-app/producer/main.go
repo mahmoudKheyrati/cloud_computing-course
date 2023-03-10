@@ -45,6 +45,5 @@ func produceMessage(p *kafka.Producer, i int) {
 		fmt.Println("produce message error: ", err)
 	}
 	<-deliveryChannel
-	p.Close()
 	//fmt.Println("message published to kafka")
 }
