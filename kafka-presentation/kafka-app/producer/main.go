@@ -1,14 +1,23 @@
 package main
 
 import (
+	"flag"
 	"fmt"
 	"github.com/confluentinc/confluent-kafka-go/kafka"
+	"log"
 	"os"
 	"sync"
 	"time"
 )
 
+var (
+	messageCount = 1
+)
+
 func main() {
+	flag.IntVar(&messageCount, "messageCount", 1, "count of the messages that you want to publish")
+	flag.Parse()
+	log.Println("start kafka producer with messageCount=", messageCount)
 	p, err := kafka.NewProducer(&kafka.ConfigMap{
 		"bootstrap.servers": "localhost:9092",
 		"acks":              "all"})
@@ -20,7 +29,7 @@ func main() {
 	// produce 30000 messages concurrently
 	var wg sync.WaitGroup
 	start := time.Now()
-	for i := 0; i < 50_000; i++ {
+	for i := 0; i < 1; i++ {
 		wg.Add(1)
 		go func(i int) {
 			defer wg.Done()
