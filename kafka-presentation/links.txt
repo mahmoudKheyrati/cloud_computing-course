@@ -1,0 +1,7 @@
+kafka different deployments: https://github.com/conduktor/kafka-stack-docker-compose
+kafka monitoring stack: https://grafana.com/blog/2021/07/26/get-comprehensive-monitoring-for-your-apache-kafka-ecosystem-instances-quickly-with-grafana-cloud/ 
+kafka streams examples: https://github.com/confluentinc/kafka-streams-examples 
+ksqldb: https://ksqldb.io/
+ksqldb example: https://github.com/confluentinc/demo-scene/tree/master/introduction-to-ksqldb 
+kafka connector example: https://github.com/tmcgrath/kafka-connect-examples 
+
